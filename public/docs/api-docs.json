@@ -6,6 +6,14 @@
     {
       "path": "/docs/api/v1/users.{format}",
       "description": "User Management"
+    },
+    {
+      "path": "/docs/api/v1/notifications.{format}",
+      "description": "Notification Management"
+    },
+    {
+      "path": "/docs/api/v1/logs.{format}",
+      "description": "Logs Management"
     }
   ],
   "authorizations": null,

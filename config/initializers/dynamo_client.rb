@@ -87,9 +87,24 @@ module DynamodbClient
         @client ||= Aws::DynamoDB::Client.new(client_config)
     end
 
-    def get_all_users
+    def get_user_logs(email)
         client
-        response = @client.scan(table_name: 'users')
+        response = @client.scan(
+            {
+                expression_attribute_values: {
+                    ":email" => {s: email,}, 
+                },
+                table_name: "logs"})
+        items = response.items
+        render_message = {
+            users: items,
+            status: 200
+        }
+    end
+
+    def get_all_items(table)
+        client
+        response = @client.scan(table_name: table)
         items = response.items
         render_message = {
             users: items,
@@ -107,10 +122,16 @@ module DynamodbClient
             email = user_create_params[:email]
             cell_phone = user_create_params[:cell_phone]
             user_status = true
+            longitude = user_create_params[:longitude]
+            latitude = user_create_params[:latitude]
+            created_at = Time.now.strftime("%m/%d/%Y %H:%M") 
             item = {
                 "email" => email,
                 "cell_phone" => cell_phone,
-                "push_status" => user_status
+                "push_status" => user_status,
+                "longitude" => longitude,
+                "latitude" => latitude,
+                "created_at" => created_at
             } 
             params = {
                 table_name: "users",
@@ -119,7 +140,7 @@ module DynamodbClient
             begin
                 result = @client.put_item(params)
                 render_message = {
-                    message: "Added item: email=#{email} - cellphone=#{cell_phone} - push_status=#{user_status}",
+                    message: "Added item: User = #{email}}",
                     status: 200
                 }
             rescue  Aws::DynamoDB::Errors::ServiceError => error
@@ -131,6 +152,35 @@ module DynamodbClient
         end
     end
     
+    def save_log(log_params)
+        client
+        # Search if user_id exists
+        email = log_params[:email]
+        cell_phone = log_params[:cell_phone]
+        longitude = log_params[:longitude]
+        latitude = log_params[:latitude]
+        message = log_params[:message]
+        created_at = Time.now.strftime("%m/%d/%Y %H:%M") 
+        item = {
+            "email" => email,
+            "cell_phone" => cell_phone,
+            "message" => message,
+            "longitude" => longitude,
+            "latitude" => latitude,
+            "created_at" => created_at
+        } 
+        params = {
+            table_name: "logs",
+            item: item
+        }
+        begin
+            result = @client.put_item(params)
+            render_message = "Added item: log"
+        rescue  Aws::DynamoDB::Errors::ServiceError => error
+            render_message = "Unable to add item: #{error.message}"
+        end
+    end
+
     def user_exists(email)
         unless @client
             client

@@ -12,7 +12,7 @@ Swagger::Docs::Config.register_apis({
       # the output location where your .json files are written to
       :api_file_path => "public/docs/",
       # the URL base path to your API
-      :base_path => "http://50.112.74.36:3000/",
+      :base_path => "http://50.112.74.36:3000/",#"http://localhost:3000/",
       # if you want to delete all .json files at each generation
       :clean_directory => true,
       # Ability to setup base controller for each api version. Api::V1::SomeController for example.

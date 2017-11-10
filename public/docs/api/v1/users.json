@@ -5,19 +5,10 @@
   "resourcePath": "users",
   "apis": [
     {
-      "path": "/api/v1/create_table",
-      "operations": [
-        {
-          "summary": "To create the users table on Dynamodb",
-          "nickname": "Api::V1::Users#create_table",
-          "method": "get"
-        }
-      ]
-    },
-    {
       "path": "/api/v1",
       "operations": [
         {
+          "summary": "To get all Users",
           "nickname": "Api::V1::Users#get_users",
           "method": "get"
         }
@@ -33,7 +24,7 @@
               "paramType": "form",
               "name": "cell_phone",
               "type": "string",
-              "description": "cell_phone",
+              "description": "Cell_phone",
               "required": true
             },
             {
@@ -41,6 +32,20 @@
               "name": "email",
               "type": "string",
               "description": "Email address",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "longitude",
+              "type": "string",
+              "description": "Longitude",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "latitude",
+              "type": "string",
+              "description": "Latitude",
               "required": true
             }
           ],
@@ -72,10 +77,7 @@
       "path": "/api/v1/destroy",
       "operations": [
         {
-          "summary": [
-            "To disable push notification from an User",
-            "To get all Users"
-          ],
+          "summary": "To disable push notification from an User",
           "parameters": [
             {
               "paramType": "form",
@@ -86,25 +88,6 @@
             }
           ],
           "nickname": "Api::V1::Users#destroy",
-          "method": "post"
-        }
-      ]
-    },
-    {
-      "path": "/api/v1/send_push",
-      "operations": [
-        {
-          "summary": "To send a push notification to an User",
-          "parameters": [
-            {
-              "paramType": "form",
-              "name": "email",
-              "type": "string",
-              "description": "Email address",
-              "required": true
-            }
-          ],
-          "nickname": "Api::V1::Users#send_push",
           "method": "post"
         }
       ]
