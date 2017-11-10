@@ -89,12 +89,15 @@ module DynamodbClient
 
     def get_user_logs(email)
         client
-        response = @client.scan(
-            {
-                expression_attribute_values: {
-                    ":email" => {s: email,}, 
+        response = @client.scan({
+            scan_filter: {
+                "email" => {
+                    attribute_value_list: [email], # value <Hash,Array,String,Numeric,Boolean,IO,Set,nil>
+                    comparison_operator: "EQ", # required, accepts EQ, NE, IN, LE, LT, GE, GT, BETWEEN, NOT_NULL, NULL, CONTAINS, NOT_CONTAINS, BEGINS_WITH
                 },
-                table_name: "logs"})
+            }, 
+            table_name: "logs", 
+        })
         items = response.items
         render_message = {
             users: items,

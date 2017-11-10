@@ -14,7 +14,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
         if result[:item]
             case result[:render_message][:status]
             when 200
-                if result[:item]["push_status"] && notification_params[:cell_phone] == result[:item]["cell_phone"].last(10)
+                if result[:item]["push_status"] && notification_params[:cell_phone] == result[:item]["cell_phone"]
                     client = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
                     message = "PUSH notification to User= #{result[:item]["email"]}"
                     client.publish({

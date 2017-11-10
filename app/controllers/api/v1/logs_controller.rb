@@ -9,10 +9,10 @@ class Api::V1::LogsController < Api::V1::BaseApiController
         render :json => render_message, :status => render_message[:status]
     end
 
-    # swagger_api :me do
-    #     summary "To list all logs of an user"
-    #     param :form, :email, :string, :required, "Email address"
-    # end
+    swagger_api :me do
+        summary "To list all logs of an user"
+        param :form, :email, :string, :required, "Email address"
+    end
     def me
         render_message = DynamodbClient.get_user_logs(logs_params[:email])
         render :json => render_message, :status => render_message[:status]
