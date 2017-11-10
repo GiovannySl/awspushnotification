@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   root 'users#get_users'
     namespace :api, defaults: { format: :json } do
       namespace :v1 do
-        get '/create_table', to:'users#create_table'
+        get '/create_tables', to:'users#create_tables'
         get '/', to: 'users#get_users'
         post '/create_user', to: 'users#create'
         post '/active', to: 'users#active'
