@@ -1,6 +1,11 @@
-class UsersController < ApplicationController
-    skip_before_action :verify_authenticity_token
+ class Api::V1::UsersController < Api::V1::BaseApiController
+    swagger_controller :users, "User Management"
     
+    swagger_api :create do
+        summary "Creates a new User"
+        param :form, :cell_phone, :string, :required, "cell_phone"
+        param :form, :email, :string, :required, "Email address"
+    end
     def create
         # Verify nil elelements
         unless user_params[:email] && user_params[:cell_phone]
@@ -19,6 +24,11 @@ class UsersController < ApplicationController
         render :json => render_message, :status => render_message[:status]
     end
 
+    swagger_api :update_cell_phone do
+        summary "Update the cellphone number of an User"
+        param :form, :cell_phone, :string, :required, "cell_phone"
+        param :form, :email, :string, :required, "Email address"
+    end
     def update_cell_phone
         result = DynamodbClient.user_exists(user_params[:email])
         if result[:item]
@@ -43,6 +53,10 @@ class UsersController < ApplicationController
         render :json => render_message, :status => render_message[:status]
     end
 
+    swagger_api :active do
+        summary "To active push notification from an User"
+        param :form, :email, :string, :required, "Email address"
+    end
     def active
         result = DynamodbClient.user_exists(user_params[:email])
         if result[:item]
@@ -72,6 +86,10 @@ class UsersController < ApplicationController
         render :json => render_message, :status => render_message[:status]
     end
 
+    swagger_api :destroy do
+        summary "To disable push notification from an User"
+        param :form, :email, :string, :required, "Email address"
+    end
     def destroy
         result = DynamodbClient.user_exists(user_params[:email])
         if result[:item]
@@ -101,16 +119,30 @@ class UsersController < ApplicationController
         render :json => render_message, :status => render_message[:status]
     end
 
+    swagger_api :get_users do
+        summary "To get all Users"
+    end
     def get_users
         render_message = DynamodbClient.get_all_users
         render :json => render_message, :status => render_message[:status]
     end
 
-    def create_table
-        render_message = DynamodbClient.create_user_table
-        render :json => render_message, :status => render_message[:status]
+    swagger_api :create_tables do
+        summary "To create the users table on Dynamodb"
+    end
+    def create_tables
+        render_message_1 = DynamodbClient.create_user_table
+        render_message_2 = DynamodbClient.create_logs_table
+        render :json => {
+            user_table: render_message_1,
+            logs_table: render_message_2},
+            :status => render_message_1[:status]
     end
 
+    swagger_api :send_push do
+        summary "To send a push notification to an User"
+        param :form, :email, :string, :required, "Email address"
+    end
     def send_push
         result = DynamodbClient.user_exists(user_params[:email])
         if result[:item]

@@ -57,10 +57,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'dotenv-rails', groups: [:development, :test]
 gem 'aws-sdk', '~> 3'
-
-# gem 'jquery-rails'
-# gem "database_cleaner", ">= 0.8.0", :group => :test
-# gem "mongoid-rspec", ">= 1.4.6", :group => :test
-# gem "email_spec", ">= 1.2.1", :group => :test
-# gem "launchy", ">= 2.1.2", :group => :test
-# gem "devise", ">= 2.1.2"
+gem 'swagger-docs'

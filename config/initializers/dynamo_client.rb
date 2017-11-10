@@ -35,6 +35,49 @@ module DynamodbClient
       end
     end
 
+    def create_logs_table
+        params = {
+            table_name: 'logs', # required
+            key_schema: [ # required
+            {
+                attribute_name: 'email', # required User:1
+                key_type: 'HASH', # required, accepts HASH, RANGE
+            },
+            {
+                attribute_name: 'created_at', # timestamp
+                key_type: 'RANGE'
+            }
+        ],
+        attribute_definitions: [ # required
+            {
+                attribute_name: 'email', # required
+                attribute_type: 'S', # required, accepts S, N, B
+            },
+            {
+                attribute_name: 'created_at', # Timestamp
+                attribute_type: 'S', # required, accepts S, N, B
+            }
+            ],
+    
+            provisioned_throughput: { # required
+                                        read_capacity_units: 5, # required
+                                        write_capacity_units: 5, # required
+            }
+        }
+        begin
+        result = DynamodbClient.client.create_table(params)
+        render_message = {
+            message: "Created table: logs",
+            status: 200
+        }
+      rescue Aws::DynamoDB::Errors::ServiceError => error
+        render_message = {
+            error: "Unable to create table: #{error.message}",
+            status: 200
+        }
+      end
+    end
+
     def client
         client_config ={
             access_key_id: ENV['AWS_ACCESS_KEY_ID'], 
