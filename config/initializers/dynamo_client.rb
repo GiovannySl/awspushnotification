@@ -99,8 +99,9 @@ module DynamodbClient
             table_name: "logs", 
         })
         items = response.items
+        items = (items.sort_by { |hsh| hsh["created_at"] }.reverse!)        
         render_message = {
-            users: items,
+            logs: items,
             status: 200
         }
     end
@@ -109,8 +110,9 @@ module DynamodbClient
         client
         response = @client.scan(table_name: table)
         items = response.items
+        items = (items.sort_by { |hsh| hsh["created_at"] }.reverse!)
         render_message = {
-            users: items,
+            items: items,
             status: 200
         }
     end
