@@ -3,10 +3,15 @@
     
     swagger_api :create do
         summary "Creates a new User"
-        param :form, :cell_phone, :string, :required, "Cell_phone"
+        param :form, :cell_phone, :string, :required, "cell_phone e.g. 753005554444"
         param :form, :email, :string, :required, "Email address"
-        param :form, :longitude, :string, :required, "Longitude"
-        param :form, :latitude, :string, :required, "Latitude"        
+        param :form, :longitude, :string, :optional, "Longitude"
+        param :form, :latitude, :string, :optional, "Latitude"
+        response 500, "Users table not found: [Dynamo error message]"
+        response 500, "Unable to add item: [Dynamo error message]"
+        response 422, "Email and phone can not be blank"
+        response 200, "This user alredy exists"
+        response 200, "Added item: User = [User email]"
     end
     def create
         # Verify nil elelements
@@ -32,8 +37,11 @@
 
     swagger_api :update_cell_phone do
         summary "Update the cellphone number of an User"
-        param :form, :cell_phone, :string, :required, "cell_phone"
+        param :form, :cell_phone, :string, :required, "cell_phone e.g. 753005554444"
         param :form, :email, :string, :required, "Email address"
+        response 200, "cellphone number updated"
+        response 200, "User not found"
+        response 500, "Users table not found: [Dynamo error message]"        
     end
     def update_cell_phone
         result = DynamodbClient.user_exists(user_params[:email])
@@ -62,6 +70,10 @@
     swagger_api :active do
         summary "To active push notification from an User"
         param :form, :email, :string, :required, "Email address"
+        response 200, "This user is already active"
+        response 200, "This user is now active"
+        response 200, "User not found"
+        response 500, "Users table not found: [Dynamo error message]"
     end
     def active
         result = DynamodbClient.user_exists(user_params[:email])
@@ -95,6 +107,10 @@
     swagger_api :destroy do
         summary "To disable push notification from an User"
         param :form, :email, :string, :required, "Email address"
+        response 200, "This user  is already disabled"
+        response 200, "This user is now disabled"
+        response 200, "User not found"
+        response 500, "Users table not found: [Dynamo error message]"
     end
     def destroy
         result = DynamodbClient.user_exists(user_params[:email])
@@ -127,6 +143,7 @@
 
     swagger_api :get_users do
         summary "To get all Users"
+        response 200, "items: [{User_1},..,{User_n}] ; order by created_at"
     end
     def get_users
         render_message = DynamodbClient.get_all_items("users")

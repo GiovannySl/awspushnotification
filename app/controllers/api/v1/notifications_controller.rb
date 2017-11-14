@@ -4,10 +4,16 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
 
     swagger_api :send_push do
         summary "To send a push notification to an User"
-        param :form, :cell_phone, :string, :required, "Cell_phone"        
+        param :form, :cell_phone, :string, :required, "cell_phone e.g. 753005554444"
         param :form, :email, :string, :required, "Email address"
-        param :form, :longitude, :string, :required, "Longitude"
-        param :form, :latitude, :string, :required, "Latitude"        
+        param :form, :longitude, :string, :optional, "Longitude"
+        param :form, :latitude, :string, :optional, "Latitude"
+        response 200, "User not found"
+        response 200, "{push_notifiation: 'Push notification send', logs: 'Added item: log'}"
+        response 200, "{push_notifiation: 'Push notification send', logs: 'Unable to add item: [Dynamo error message]'}"
+        response 500, "Users table not found: [Dynamo error message]"
+        response 200, "This user has push notification disabled"
+        response 500, "Internal Error"
     end
     def send_push
         result = DynamodbClient.user_exists(notification_params[:email])
@@ -59,6 +65,9 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
     swagger_api :verify_number do
         summary "To send the last 4 digits of the cell phone"
         param :form, :email, :string, :required, "Email address"
+        response 200, "e.g. = '5555'"
+        response 200, "User not found"
+        response 500, "Users table not found: [Dynamo error message]"
     end
     def verify_number
         result = DynamodbClient.user_exists(notification_params[:email])

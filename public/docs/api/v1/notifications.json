@@ -24,7 +24,7 @@
               "paramType": "form",
               "name": "cell_phone",
               "type": "string",
-              "description": "Cell_phone",
+              "description": "cell_phone e.g. 753005554444",
               "required": true
             },
             {
@@ -39,14 +39,46 @@
               "name": "longitude",
               "type": "string",
               "description": "Longitude",
-              "required": true
+              "required": false
             },
             {
               "paramType": "form",
               "name": "latitude",
               "type": "string",
               "description": "Latitude",
-              "required": true
+              "required": false
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "User not found"
+            },
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "{push_notifiation: 'Push notification send', logs: 'Added item: log'}"
+            },
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "{push_notifiation: 'Push notification send', logs: 'Unable to add item: [Dynamo error message]'}"
+            },
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "This user has push notification disabled"
+            },
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "Users table not found: [Dynamo error message]"
+            },
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "Internal Error"
             }
           ],
           "nickname": "Api::V1::Notifications#send_push",
@@ -66,6 +98,23 @@
               "type": "string",
               "description": "Email address",
               "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "e.g. = '5555'"
+            },
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "User not found"
+            },
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "Users table not found: [Dynamo error message]"
             }
           ],
           "nickname": "Api::V1::Notifications#verify_number",

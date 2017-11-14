@@ -9,6 +9,13 @@
       "operations": [
         {
           "summary": "To get all Users",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "items: [{User_1},..,{User_n}] ; order by created_at"
+            }
+          ],
           "nickname": "Api::V1::Users#get_users",
           "method": "get"
         }
@@ -24,7 +31,7 @@
               "paramType": "form",
               "name": "cell_phone",
               "type": "string",
-              "description": "Cell_phone",
+              "description": "cell_phone e.g. 753005554444",
               "required": true
             },
             {
@@ -39,14 +46,41 @@
               "name": "longitude",
               "type": "string",
               "description": "Longitude",
-              "required": true
+              "required": false
             },
             {
               "paramType": "form",
               "name": "latitude",
               "type": "string",
               "description": "Latitude",
-              "required": true
+              "required": false
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "This user alredy exists"
+            },
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "Added item: User = [User email]"
+            },
+            {
+              "code": 422,
+              "responseModel": null,
+              "message": "Email and phone can not be blank"
+            },
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "Users table not found: [Dynamo error message]"
+            },
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "Unable to add item: [Dynamo error message]"
             }
           ],
           "nickname": "Api::V1::Users#create",
@@ -68,6 +102,28 @@
               "required": true
             }
           ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "This user is already active"
+            },
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "This user is now active"
+            },
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "User not found"
+            },
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "Users table not found: [Dynamo error message]"
+            }
+          ],
           "nickname": "Api::V1::Users#active",
           "method": "post"
         }
@@ -87,6 +143,28 @@
               "required": true
             }
           ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "This user  is already disabled"
+            },
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "This user is now disabled"
+            },
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "User not found"
+            },
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "Users table not found: [Dynamo error message]"
+            }
+          ],
           "nickname": "Api::V1::Users#destroy",
           "method": "post"
         }
@@ -102,7 +180,7 @@
               "paramType": "form",
               "name": "cell_phone",
               "type": "string",
-              "description": "cell_phone",
+              "description": "cell_phone e.g. 753005554444",
               "required": true
             },
             {
@@ -111,6 +189,23 @@
               "type": "string",
               "description": "Email address",
               "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "cellphone number updated"
+            },
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "User not found"
+            },
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "Users table not found: [Dynamo error message]"
             }
           ],
           "nickname": "Api::V1::Users#update_cell_phone",

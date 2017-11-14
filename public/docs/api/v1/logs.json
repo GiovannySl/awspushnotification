@@ -9,6 +9,13 @@
       "operations": [
         {
           "summary": "To list all logs",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "items: [{Log_1},..,{Log_n}] ; order by created_at"
+            }
+          ],
           "nickname": "Api::V1::Logs#index",
           "method": "get"
         }
@@ -26,6 +33,13 @@
               "type": "string",
               "description": "Email address",
               "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "logs: [{User_log_1},..,{User_log_n}] ; order by created_at"
             }
           ],
           "nickname": "Api::V1::Logs#me",
