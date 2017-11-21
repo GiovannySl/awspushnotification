@@ -19,4 +19,4 @@
 .byebug_history
 .env
 ## Ignore Swagger JSON files.
-/public/apidocs/
+/public/docs/

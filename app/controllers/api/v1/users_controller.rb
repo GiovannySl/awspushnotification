@@ -14,6 +14,7 @@
         response 200, "Added item: User = [User email]"
     end
     def create
+        debugger
         # Verify nil elelements
         unless user_params[:email] && user_params[:token]
             render_message = {
@@ -153,6 +154,6 @@
     private
     def user_params
         # whitelist params
-        params.permit(:cell_phone, :email, :longitude, :latitude)
+        params.permit(:token, :email, :longitude, :latitude)
     end
 end
