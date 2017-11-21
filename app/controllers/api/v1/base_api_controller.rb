@@ -12,8 +12,8 @@ class Api::V1::BaseApiController < ApplicationController
     end
     private
     def setup_basic_api_documentation(subclass)
-      [:create, :update_cell_phone, :active, :destroy, :me, :index,
-      :get_users, :create_tables, :send_push, :verify_number].each do |api_action|
+      [:create, :update_token, :active, :destroy, :me, :index,
+      :get_users, :create_tables, :send_push].each do |api_action|
           swagger_api api_action do
           end
       end

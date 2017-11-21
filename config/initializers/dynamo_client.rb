@@ -125,14 +125,14 @@ module DynamodbClient
             render_message = user[:render_message]
         else
             email = user_create_params[:email]
-            cell_phone = user_create_params[:cell_phone]
+            token = user_create_params[:token]
             user_status = true
             longitude = user_create_params[:longitude]
             latitude = user_create_params[:latitude]
             created_at = Time.now.strftime("%m/%d/%Y %H:%M") 
             item = {
                 "email" => email,
-                "cell_phone" => cell_phone,
+                "token" => token,
                 "push_status" => user_status,
                 "longitude" => longitude,
                 "latitude" => latitude,
@@ -161,14 +161,14 @@ module DynamodbClient
         client
         # Search if user_id exists
         email = log_params[:email]
-        cell_phone = log_params[:cell_phone]
+        token = log_params[:token]
         longitude = log_params[:longitude]
         latitude = log_params[:latitude]
         message = log_params[:message]
         created_at = Time.now.strftime("%m/%d/%Y %H:%M") 
         item = {
             "email" => email,
-            "cell_phone" => cell_phone,
+            "token" => token,
             "message" => message,
             "longitude" => longitude,
             "latitude" => latitude,
@@ -249,7 +249,7 @@ module DynamodbClient
           })
     end
 
-    def update_cell_phone(email, cell_phone)
+    def update_token(email, token)
         unless @client
             client
         end
@@ -258,9 +258,9 @@ module DynamodbClient
             key: {
               'email' => email
             },
-            update_expression: 'SET cell_phone = :cell_phone',
+            update_expression: 'SET token = :token',
             expression_attribute_values: {
-              ':cell_phone' => cell_phone
+              ':token' => token
             }
           })
     end

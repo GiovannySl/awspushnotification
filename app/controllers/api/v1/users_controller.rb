@@ -3,21 +3,21 @@
     
     swagger_api :create do
         summary "Creates a new User"
-        param :form, :cell_phone, :string, :required, "cell_phone e.g. 753005554444"
+        param :form, :token, :string, :required, "token = RegisterID"
         param :form, :email, :string, :required, "Email address"
         param :form, :longitude, :string, :optional, "Longitude"
         param :form, :latitude, :string, :optional, "Latitude"
         response 500, "Users table not found: [Dynamo error message]"
         response 500, "Unable to add item: [Dynamo error message]"
-        response 422, "Email and phone can not be blank"
+        response 422, "Email and token can not be blank"
         response 200, "This user alredy exists"
         response 200, "Added item: User = [User email]"
     end
     def create
         # Verify nil elelements
-        unless user_params[:email] && user_params[:cell_phone]
+        unless user_params[:email] && user_params[:token]
             render_message = {
-                error: "Email and phone can not be blank",
+                error: "Email and token can not be blank",
                 status: 422
             }
         else
@@ -26,7 +26,7 @@
             latitude = user_params[:latitude] || "nil"
             user_create_params = {
                 email: user_params[:email],
-                cell_phone: user_params[:cell_phone],
+                token: user_params[:token],
                 longitude: longitude,
                 latitude: latitude
             }
@@ -35,23 +35,23 @@
         render :json => render_message, :status => render_message[:status]
     end
 
-    swagger_api :update_cell_phone do
-        summary "Update the cellphone number of an User"
-        param :form, :cell_phone, :string, :required, "cell_phone e.g. 753005554444"
+    swagger_api :update_token do
+        summary "Update the token of an User"
+        param :form, :token, :string, :required, "token e.g. 753005554444"
         param :form, :email, :string, :required, "Email address"
-        response 200, "cellphone number updated"
+        response 200, "token updated"
         response 200, "User not found"
         response 500, "Users table not found: [Dynamo error message]"        
     end
-    def update_cell_phone
+    def update_token
         result = DynamodbClient.user_exists(user_params[:email])
         if result[:item]
             case result[:render_message][:status]
             when 200
-                DynamodbClient.update_cell_phone(user_params[:email], user_params[:cell_phone])
+                DynamodbClient.update_token(user_params[:email], user_params[:token])
                 render_message = 
                 {
-                    message: "cellphone number updated",
+                    message: "token updated",
                     status: 200
                 }
             else

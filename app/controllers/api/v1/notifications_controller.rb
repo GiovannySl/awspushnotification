@@ -4,7 +4,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
 
     swagger_api :send_push do
         summary "To send a push notification to an User"
-        param :form, :cell_phone, :string, :required, "cell_phone e.g. 753005554444"
+        param :form, :token, :string, :required, "token"
         param :form, :email, :string, :required, "Email address"
         param :form, :longitude, :string, :optional, "Longitude"
         param :form, :latitude, :string, :optional, "Latitude"
@@ -20,25 +20,33 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
         if result[:item]
             case result[:render_message][:status]
             when 200
-                if result[:item]["push_status"] && notification_params[:cell_phone] == result[:item]["cell_phone"]
-                    client = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
-                    client.set_sms_attributes({
-                        attributes: { # required
-                          "DefaultSMSType" => "Transactional",
-                        },
-                      })
+                if result[:item]["push_status"]
+                    cell_token = notification_params[:token]
+                    sns = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
+                    resp = sns.create_platform_endpoint(
+                        platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/TieInPushNotification",
+                        token: cell_token,
+                        attributes: {
+                            "UserId" => "notification_params[:email]"
+                        }
+                    )
                     local_time = Time.now.getlocal('-05:00').strftime("%m/%d/%Y a las %H:%M")
-                    message = "El siguiente es un mensaje de texto de prueba solicitado el #{local_time} para #{result[:item]["email"]} al número +#{result[:item]["cell_phone"]}."
-                    client.publish({
-                        phone_number: result[:item]["cell_phone"],
-                        message: message,
-                    })
+                    message_body = "El siguiente es un mensaje de texto de prueba solicitado el #{local_time} para #{result[:item]["email"]}."
+                    message = {
+                        #default: { message: "PUSH" }.to_json,
+                        GCM: { data: message_body }.to_json
+                    }
+                    respp = sns.publish(
+                        target_arn: resp.endpoint_arn,
+                        message: message.to_json,
+                        message_structure: "json"
+                    )
                     # format log params
                     longitude = notification_params[:longitude] || "nil"
                     latitude = notification_params[:latitude] || "nil"
                     log_params = {
                         email: notification_params[:email],
-                        cell_phone: notification_params[:cell_phone],
+                        token: notification_params[:token],
                         longitude: longitude,
                         latitude: latitude,
                         message: message
@@ -49,37 +57,6 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                 else
                     repsonse = "This user has push notification disabled"
                 end
-                render_message = 
-                {
-                    message: repsonse,
-                    status: 200
-                }
-            else
-                render_message = result[:render_message]
-            end
-        else
-            render_message = 
-            {
-                message: "User not found",
-                status: 200
-            }
-        end
-        render :json => render_message, :status => render_message[:status]
-    end
-
-    swagger_api :verify_number do
-        summary "To send the last 4 digits of the cell phone"
-        param :form, :email, :string, :required, "Email address"
-        response 200, "e.g. = '5555'"
-        response 200, "User not found"
-        response 500, "Users table not found: [Dynamo error message]"
-    end
-    def verify_number
-        result = DynamodbClient.user_exists(notification_params[:email])
-        if result[:item]
-            case result[:render_message][:status]
-            when 200
-                repsonse = result[:item]["cell_phone"].last(4)
                 render_message = 
                 {
                     message: repsonse,
@@ -113,6 +90,6 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
     private
     def notification_params
         # whitelist params
-        params.permit(:cell_phone, :email, :longitude, :latitude)
+        params.permit(:token, :email, :longitude, :latitude)
     end
 end
