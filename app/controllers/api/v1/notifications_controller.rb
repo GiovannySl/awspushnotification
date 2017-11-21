@@ -23,7 +23,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
             when 200
                 if result[:item]["push_status"]
                     cell_token = notification_params[:token]
-                    sns = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
+                    sns = Aws::SNS::Client.new#(region: ENV['AWS_REGION'])
                     resp = sns.create_platform_endpoint(
                         platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/AwsPushNotification",
                         token: cell_token,
@@ -34,14 +34,16 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                     local_time = Time.now.getlocal('-05:00').strftime("%m/%d/%Y a las %H:%M")
                     message_body = "El siguiente es un mensaje de texto de prueba solicitado el #{local_time} para #{result[:item]["email"]}."
                     message = {
-                        #default: { message: "PUSH" }.to_json,
+                        default: { message: message_body }.to_json,
                         GCM: { data: message_body }.to_json
                     }
+                    debugger
                     respp = sns.publish(
                         target_arn: resp.endpoint_arn,
                         message: message.to_json,
                         message_structure: "json"
                     )
+                    debugger
                     # format log params
                     longitude = notification_params[:longitude] || "nil"
                     latitude = notification_params[:latitude] || "nil"
