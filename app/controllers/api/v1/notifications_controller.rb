@@ -23,7 +23,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
             when 200
                 if result[:item]["push_status"]
                     cell_token = notification_params[:token]
-                    sns = Aws::SNS::Client.new#(region: ENV['AWS_REGION'])
+                    sns = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
                     resp = sns.create_platform_endpoint(
                         platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/AwsPushNotification",
                         token: cell_token,
