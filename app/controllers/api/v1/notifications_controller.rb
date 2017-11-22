@@ -40,34 +40,16 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                     end
                     local_time = Time.now.getlocal('-05:00').strftime("%m/%d/%Y a las %H:%M")
                     message_body = "El siguiente es un mensaje de texto de prueba solicitado el #{local_time} para #{result[:item]["email"]}."
-                    
-                    gcm = {
-                        data: {
-                          message: message_body
-                        }
-                      }
-                       
-                      payload = {
-                        default: nil,
-                        GCM: JSON.dump(gcm)
-                      }
-                       
-                      options = {
-                        :target_arn => cell_arn,
-                        :message => payload.to_json,
-                        :message_structure => "json"
-                      }
-                      result = sns.publish(options)
-                    
-                    # message = {
-                    #     default: { message: message_body }.to_json,
-                    #     GCM: { data: message_body }.to_json
-                    # # }
-                    # respp = sns.publish(
-                    #     target_arn: cell_arn,
-                    #     message: message.to_json,
-                    #     message_structure: "json"
-                    # )
+
+                    message = {
+                        default: { message: message_body }.to_json,
+                        GCM: { notification: message_body }.to_json
+                    # }
+                    respp = sns.publish(
+                        target_arn: cell_arn,
+                        message: message.to_json,
+                        message_structure: "json"
+                    )
                     # format log params
                     longitude = notification_params[:longitude] || "nil"
                     latitude = notification_params[:latitude] || "nil"
@@ -76,7 +58,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                         token: notification_params[:token],
                         longitude: longitude,
                         latitude: latitude,
-                        message: gcm
+                        message: message
                     }
                     log_message = DynamodbClient.save_log(log_params)
                     repsonse = {push_notifiation: "Push notification send",
