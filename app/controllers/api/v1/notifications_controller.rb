@@ -54,7 +54,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                        
                       options = {
                         :target_arn => cell_arn,
-                        :message => payload,
+                        :message => payload.to_json,
                         :message_structure => "json"
                       }
                       result = sns.publish(options)
