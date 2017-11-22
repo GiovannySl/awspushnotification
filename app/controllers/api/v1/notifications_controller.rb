@@ -33,9 +33,9 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                             token: notification_params[:token],
                             attributes: {
                                 "UserId" => "#{notification_params[:email]}"
-                                })
+                                }).endpoint_arn
                         DynamodbClient.change_token(notification_params[:email],notification_params[:token])
-                        DynamodbClient.change_arn(notification_params[:email],cell_arn.endpoint_arn)
+                        DynamodbClient.change_arn(notification_params[:email],cell_arn)
                     else
                         cell_arn = result[:item]["arn"]
                     end
@@ -46,7 +46,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                         GCM: { data: message_body }.to_json
                     }
                     respp = sns.publish(
-                        target_arn: cell_arn.endpoint_arn,
+                        target_arn: cell_arn,
                         message: message.to_json,
                         message_structure: "json"
                     )
