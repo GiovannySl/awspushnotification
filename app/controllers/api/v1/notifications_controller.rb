@@ -42,9 +42,10 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                     message_body = "El siguiente es un mensaje de texto de prueba solicitado el #{local_time} para #{result[:item]["email"]}."
 
                     message = {
-                        default: { message: message_body }.to_json,
+                        #default: { message: message_body }.to_json,
                         GCM: { notification: message_body }.to_json
                     }
+                    debugger
                     respp = sns.publish(
                         target_arn: cell_arn,
                         message: message.to_json,
