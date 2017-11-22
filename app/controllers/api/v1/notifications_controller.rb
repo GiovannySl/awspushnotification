@@ -43,7 +43,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
 
                     message = {
                         #default: { message: message_body }.to_json,
-                        GCM: { notification: message_body }.to_json
+                        GCM: { notification: {text: message_body} }.to_json
                     }
                     debugger
                     respp = sns.publish(
