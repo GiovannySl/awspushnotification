@@ -38,7 +38,7 @@
 
     swagger_api :update_token do
         summary "Update the token of an User"
-        param :form, :token, :string, :required, "token e.g. 753005554444"
+        param :form, :token, :string, :required, "token"
         param :form, :email, :string, :required, "Email address"
         response 200, "token updated"
         response 200, "User not found"

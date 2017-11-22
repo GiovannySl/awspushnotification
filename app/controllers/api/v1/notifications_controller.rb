@@ -16,20 +16,19 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
         response 500, "Internal Error"
     end
     def send_push
-        debugger
         result = DynamodbClient.user_exists(notification_params[:email])
         if result[:item]
             case result[:render_message][:status]
-            when 200
-                if result[:item]["push_status"]
-                    cell_token = notification_params[:token]
-                    sns = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
-                    resp = sns.create_platform_endpoint(
-                        platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/AwsPushNotification",
-                        token: cell_token,
-                        attributes: {
-                            "UserId" => "#{notification_params[:email]}"
-                        }
+        when 200
+            if result[:item]["push_status"]
+                cell_token = notification_params[:token]
+                sns = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
+                resp = sns.create_platform_endpoint(
+                    platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/NotificationAWS",
+                    token: cell_token,
+                    attributes: {
+                        "UserId" => "#{notification_params[:email]}"
+                    }
                     )
                     local_time = Time.now.getlocal('-05:00').strftime("%m/%d/%Y a las %H:%M")
                     message_body = "El siguiente es un mensaje de texto de prueba solicitado el #{local_time} para #{result[:item]["email"]}."
