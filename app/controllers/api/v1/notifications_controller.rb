@@ -48,8 +48,8 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                       }
                        
                       payload = {
-                        "default" => nil,
-                        "GCM" => JSON.dump(gcm)
+                        "default": nil,
+                        "GCM": JSON.dump(gcm)
                       }
                        debugger
                       options = {
@@ -58,16 +58,6 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                         :message_structure => "json"
                       }
                       result = sns.publish(options)
-                    
-                    # message = {
-                    #     default: { message: message_body }.to_json,
-                    #     GCM: { data: message_body }.to_json
-                    # # }
-                    # respp = sns.publish(
-                    #     target_arn: cell_arn,
-                    #     message: message.to_json,
-                    #     message_structure: "json"
-                    # )
                     # format log params
                     longitude = notification_params[:longitude] || "nil"
                     latitude = notification_params[:latitude] || "nil"

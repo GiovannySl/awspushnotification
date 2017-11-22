@@ -29,9 +29,9 @@
           "parameters": [
             {
               "paramType": "form",
-              "name": "cell_phone",
+              "name": "token",
               "type": "string",
-              "description": "cell_phone e.g. 753005554444",
+              "description": "token = RegisterID",
               "required": true
             },
             {
@@ -70,7 +70,7 @@
             {
               "code": 422,
               "responseModel": null,
-              "message": "Email and phone can not be blank"
+              "message": "Email and token can not be blank"
             },
             {
               "code": 500,
@@ -166,49 +166,6 @@
             }
           ],
           "nickname": "Api::V1::Users#destroy",
-          "method": "post"
-        }
-      ]
-    },
-    {
-      "path": "/api/v1/update_cell_phone",
-      "operations": [
-        {
-          "summary": "Update the cellphone number of an User",
-          "parameters": [
-            {
-              "paramType": "form",
-              "name": "cell_phone",
-              "type": "string",
-              "description": "cell_phone e.g. 753005554444",
-              "required": true
-            },
-            {
-              "paramType": "form",
-              "name": "email",
-              "type": "string",
-              "description": "Email address",
-              "required": true
-            }
-          ],
-          "responseMessages": [
-            {
-              "code": 200,
-              "responseModel": null,
-              "message": "cellphone number updated"
-            },
-            {
-              "code": 200,
-              "responseModel": null,
-              "message": "User not found"
-            },
-            {
-              "code": 500,
-              "responseModel": null,
-              "message": "Users table not found: [Dynamo error message]"
-            }
-          ],
-          "nickname": "Api::V1::Users#update_cell_phone",
           "method": "post"
         }
       ]
