@@ -19,30 +19,37 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
         result = DynamodbClient.user_exists(notification_params[:email])
         if result[:item]
             case result[:render_message][:status]
-        when 200
-            if result[:item]["push_status"]
-                cell_token = notification_params[:token]
-                sns = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
-                resp = sns.create_platform_endpoint(
-                    platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/NotificationAWS",
-                    token: cell_token,
-                    attributes: {
-                        "UserId" => "#{notification_params[:email]}"
-                    }
-                    )
+            when 200
+                if result[:item]["push_status"]
+                    cell_token = notification_params[:token]
+                    sns = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
+                    unless result[:item]["token"] == notification_params[:token]
+                        sns.delete_endpoint({
+                            endpoint_arn: result[:item]["arn"], # required
+                        })
+                        debugger
+                        cell_arn = sns.create_platform_endpoint(
+                            platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/NotificationAWS",
+                            token: notification_params[:token],
+                            attributes: {
+                                "UserId" => "#{notification_params[:email]}"
+                                })
+                        DynamodbClient.change_token(notification_params[:email],notification_params[:token])
+                        DynamodbClient.change_arn(notification_params[:email],cell_arn.endpoint_arn)
+                    else
+                        cell_arn = result[:item]["arn"]
+                    end
                     local_time = Time.now.getlocal('-05:00').strftime("%m/%d/%Y a las %H:%M")
                     message_body = "El siguiente es un mensaje de texto de prueba solicitado el #{local_time} para #{result[:item]["email"]}."
                     message = {
                         default: { message: message_body }.to_json,
                         GCM: { data: message_body }.to_json
                     }
-                    debugger
                     respp = sns.publish(
-                        target_arn: resp.endpoint_arn,
+                        target_arn: cell_arn.endpoint_arn,
                         message: message.to_json,
                         message_structure: "json"
                     )
-                    debugger
                     # format log params
                     longitude = notification_params[:longitude] || "nil"
                     latitude = notification_params[:latitude] || "nil"

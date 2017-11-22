@@ -129,10 +129,12 @@ module DynamodbClient
             user_status = true
             longitude = user_create_params[:longitude]
             latitude = user_create_params[:latitude]
+            arn = user_create_params[:arn]
             created_at = Time.now.strftime("%m/%d/%Y %H:%M") 
             item = {
                 "email" => email,
                 "token" => token,
+                "arn" => arn,
                 "push_status" => user_status,
                 "longitude" => longitude,
                 "latitude" => latitude,
@@ -245,6 +247,38 @@ module DynamodbClient
             update_expression: 'SET push_status = :push_status',
             expression_attribute_values: {
               ':push_status' => false
+            }
+          })
+    end
+
+    def change_token(email, token)
+        unless @client
+            client
+        end
+        @client.update_item({
+            table_name: 'users',
+            key: {
+              'email' => email
+            },
+            update_expression: 'SET token = :token',
+            expression_attribute_values: {
+              ':token' => token
+            }
+          })
+    end
+
+    def change_arn(email, arn)
+        unless @client
+            client
+        end
+        @client.update_item({
+            table_name: 'users',
+            key: {
+              'email' => email
+            },
+            update_expression: 'SET arn = :arn',
+            expression_attribute_values: {
+              ':arn' => arn
             }
           })
     end
