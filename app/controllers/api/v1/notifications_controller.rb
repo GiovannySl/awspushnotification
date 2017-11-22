@@ -76,7 +76,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                         token: notification_params[:token],
                         longitude: longitude,
                         latitude: latitude,
-                        message: message
+                        message: gcm
                     }
                     log_message = DynamodbClient.save_log(log_params)
                     repsonse = {push_notifiation: "Push notification send",
