@@ -27,7 +27,7 @@
             sns = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
             begin
                 cell_arn = sns.create_platform_endpoint(
-                    platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/NotificationAWS",
+                    platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/AwsPushNotification",
                     token: user_params[:token],
                     attributes: {
                         "UserId" => "#{user_params[:email]}"

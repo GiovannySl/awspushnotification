@@ -28,7 +28,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                             endpoint_arn: result[:item]["arn"], # required
                         })
                         cell_arn = sns.create_platform_endpoint(
-                            platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/NotificationAWS",
+                            platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/AwsPushNotification",
                             token: notification_params[:token],
                             attributes: {
                                 "UserId" => "#{notification_params[:email]}"
@@ -41,7 +41,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                     local_time = Time.now.getlocal('-05:00').strftime("%m/%d/%Y a las %H:%M")
                     message_body = "El siguiente es un mensaje de texto de prueba solicitado el #{local_time} para #{result[:item]["email"]}."
                     message = {
-                        #default: { message: message_body }.to_json,
+                        default: { message: message_body }.to_json,
                         GCM: { data: message_body }.to_json
                     }
                     respp = sns.publish(
