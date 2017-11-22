@@ -51,7 +51,7 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                         "default" => nil,
                         "GCM" => JSON.dump(gcm)
                       }
-                       
+                       debugger
                       options = {
                         :target_arn => cell_arn,
                         :message => payload.to_json,
