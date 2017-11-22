@@ -48,8 +48,8 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                       }
                        
                       payload = {
-                        default: nil,
-                        GCM: JSON.dump(gcm)
+                        "default" => nil,
+                        "GCM" => JSON.dump(gcm)
                       }
                        
                       options = {
