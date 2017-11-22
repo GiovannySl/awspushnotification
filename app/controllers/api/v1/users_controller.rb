@@ -25,12 +25,20 @@
             longitude = user_params[:longitude] || "nil"
             latitude = user_params[:latitude] || "nil"
             sns = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
-            cell_arn = sns.create_platform_endpoint(
-                platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/NotificationAWS",
-                token: user_params[:token],
-                attributes: {
-                    "UserId" => "#{user_params[:email]}"
-                }).endpoint_arn
+            begin
+                cell_arn = sns.create_platform_endpoint(
+                    platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/NotificationAWS",
+                    token: user_params[:token],
+                    attributes: {
+                        "UserId" => "#{user_params[:email]}"
+                    }).endpoint_arn
+            rescue  Aws::SNS::Errors::ServiceError => error
+                debugger
+                render_message = {
+                    error: "Unable to add item: #{error.message}",
+                    status: 500
+                }
+            end
             user_create_params = {
                 email: user_params[:email],
                 token: user_params[:token],
