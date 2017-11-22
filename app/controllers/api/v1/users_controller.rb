@@ -14,7 +14,6 @@
         response 200, "Added item: User = [User email]"
     end
     def create
-        debugger
         # Verify nil elelements
         unless user_params[:email] && user_params[:token]
             render_message = {
