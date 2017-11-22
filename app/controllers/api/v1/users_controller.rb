@@ -33,11 +33,7 @@
                         "UserId" => "#{user_params[:email]}"
                     }).endpoint_arn
             rescue  Aws::SNS::Errors::ServiceError => error
-                debugger
-                render_message = {
-                    error: "Unable to add item: #{error.message}",
-                    status: 500
-                }
+                cell_arn = error.message.split(" ")[5]
             end
             user_create_params = {
                 email: user_params[:email],
