@@ -22,12 +22,12 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
             when 200
                 if result[:item]["push_status"]
                     cell_token = notification_params[:token]
-                    @sns = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
+                    sns = Aws::SNS::Client.new(region: ENV['AWS_REGION'])
                     unless result[:item]["token"] == notification_params[:token]
-                        @sns.delete_endpoint({
+                        sns.delete_endpoint({
                             endpoint_arn: result[:item]["arn"], # required
                         })
-                        cell_arn = @sns.create_platform_endpoint(
+                        cell_arn = sns.create_platform_endpoint(
                             platform_application_arn: "arn:aws:sns:us-west-2:606258166767:app/GCM/AwsPushNotification",
                             token: notification_params[:token],
                             attributes: {
@@ -51,13 +51,13 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
                         "default": nil,
                         "GCM": JSON.dump(gcm)
                       }
-                      @options = {
+                      options = {
                         :target_arn => cell_arn,
                         :message => payload.to_json,
                         :message_structure => "json"
                       }
-                      result = 
-                      handle_asynchronously :aws_send_push, :run_at => Proc.new { 5.seconds.from_now }
+                      sleep 5                      
+                      result = sns.publish(options)
                     # format log params
                     longitude = notification_params[:longitude] || "nil"
                     latitude = notification_params[:latitude] || "nil"
@@ -108,9 +108,5 @@ class Api::V1::NotificationsController < Api::V1::BaseApiController
     def notification_params
         # whitelist params
         params.permit(:token, :email, :longitude, :latitude)
-    end
-
-    def aws_send_push
-        @sns.publish(@options)
     end
 end
