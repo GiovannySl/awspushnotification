@@ -58,3 +58,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'dotenv-rails', groups: [:development, :test]
 gem 'aws-sdk', '~> 3'
 gem 'swagger-docs'
+gem 'delayed_job', '~> 4.1', '>= 4.1.2'
